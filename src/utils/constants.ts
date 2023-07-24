@@ -1,1 +1,0 @@
-export const bazeUrl: string = 'http://5.181.255.32/api/v1/';
