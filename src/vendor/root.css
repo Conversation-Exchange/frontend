@@ -1,0 +1,38 @@
+:root {
+  /* Typography */
+  --font-sans: "Inter", sans-serif;
+
+  /* Color scheme */
+
+  /* Colors */
+  /*Старые для путей пользователя, потом убрать*/
+  --color-primary: #1172CB;
+  --color-background-header: #9CCAF4;
+  --color-background-content: #C4DCF2;
+  --color-input-placeholder: #8FA1B2;
+
+  /*По макету*/
+  --soft-grey: #9A98A8;
+  --grey-color-50: #F0F2F4;
+  --grey-color-90: #909090;
+  --grey-color-500: #323944;
+
+  /* Base */
+  --color-base-black: #000;
+  --color-base-white: #fff;
+
+  /* Shadows */
+  --card-shadow: 0px 0px 8px 0px rgba(17, 17, 26, 0.10), 0px 1px 0px 0px rgba(17, 17, 26, 0.05);
+
+  /* Typography */
+  /*Старые для путей пользователя, потом убрать*/
+  --font-text-xl-regular: 400 36px/43.57px var(--font-sans);
+  --font-text-lg-regular: 400 24px/29.05px var(--font-sans);
+
+  /*По макету*/
+  --font-text-13-108-normal: 400 13px/14px var(--font-sans);
+  --font-text-14-100-normal: 400 14px/14px var(--font-sans);
+  --font-text-14-140-normal: 400 14px/1.4 var(--font-sans);
+  --font-text-16-120-normal: 400 16px/1.2 var(--font-sans);
+
+}

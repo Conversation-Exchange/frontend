@@ -1,0 +1,21 @@
+.header {
+  width: 1440px;
+  height: 95px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: white;
+  padding: 18px 24px;
+  margin: 16px auto;
+
+  a:hover {
+    cursor: pointer;
+    opacity: 0.5;
+    transition: 0.5s;
+  }
+
+  &__buttonContainer {
+    display: flex;
+    gap: 40px;
+  }
+}

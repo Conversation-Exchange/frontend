@@ -1,0 +1,23 @@
+.preloader {
+  position: relative;
+  top: 50%;
+  left: 50%;
+  height: 60px;
+  width: 60px;
+  border-left: 2px solid #6d47d1;
+  border-bottom: 2px solid #6d47d1;
+  border-right: 2px solid #6d47d1;
+  border-top: 2px solid transparent;
+  border-radius: 50%;
+  animation: preloader 1s linear infinite;
+}
+
+@keyframes preloader {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}

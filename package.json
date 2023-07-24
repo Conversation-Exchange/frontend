@@ -1,5 +1,6 @@
 {
   "name": "conversation-exchange-frontend",
+  "homepage": "https://Conversation-Exchange.github.io/frontend",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -9,14 +10,10 @@
     "classnames": "^2.3.2",
     "compose-function": "^3.0.3",
     "gh-pages": "^5.0.0",
-    "mobx": "^6.9.0",
-    "mobx-react-lite": "^3.4.3",
     "react": "^18.2.0",
-    "react-css-modules": "^4.7.11",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.14.1",
-    "react-scripts": "5.0.1",
-    "web-vitals": "^2.1.4"
+    "react-scripts": "5.0.1"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -24,7 +21,8 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d build"
+    "deploy": "gh-pages -d build",
+    "api": " npx swagger-typescript-api -p http://5.181.255.32/api/v1/schema/ -o ./src -n utils/openapi.ts"
   },
   "eslintConfig": {
     "extends": [
@@ -45,11 +43,15 @@
     ]
   },
   "devDependencies": {
-    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+    "@babel/plugin-proposal-private-property-in-object": "*",
+    "@types/mini-css-extract-plugin": "^2.5.1",
     "@types/compose-function": "^0.0.30",
     "css-loader": "^6.8.1",
     "mini-css-extract-plugin": "^2.7.6",
     "style-loader": "^3.3.3",
-    "@babel/plugin-proposal-private-property-in-object": "^7.21.11"
+    "typescript": "^5.1.6",
+    "typescript-plugin-css-modules": "^5.0.1",
+    "mobx": "^6.9.0",
+    "mobx-react-lite": "^3.4.3"
   }
 }

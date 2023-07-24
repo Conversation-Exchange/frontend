@@ -1,0 +1,42 @@
+.root {
+  display: inline-flex;
+  height: 36px;
+  box-sizing: border-box;
+  align-items: center;
+  border: none;
+  border-radius: 20px;
+  padding: 0;
+  cursor: pointer;
+  width: max-content;
+  padding: 16px 32px;
+  font-size: 16px;
+  line-height: 19.36px;
+  font-weight: 400;
+  font-family: 'Inter';
+  text-decoration: none;
+  text-align: center;
+  transition-duration: 0.5s;
+}
+
+.variant-primary {
+  color: white;
+  background-color: #6D47D1;
+    &:hover {
+      background-color: #af99e7;
+    }
+}
+
+
+.variant-white {
+  padding: 15px 31px;
+  color: var(--color-accent-base);
+  background-color: rgba(0, 0, 0, 0);
+  border: 1px solid #6D47D1;
+
+  &:hover {
+      color: rgb(30, 29, 29);
+      border-color: #6D47D1;
+      background-color: #6D47D1;
+      color: white;
+    }
+}

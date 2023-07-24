@@ -1,0 +1,106 @@
+.footer {
+  font-family: 'Inter', Arial, sans-serif;
+  background-color: #6D47D1;
+  color: white;
+
+  &__container {
+    width: 1440px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin: 0 auto;
+  }
+
+  &__leftColumn {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 280px;
+    margin: 40px 0 40px 16px;
+  }
+
+  &__icons {
+    display: flex;
+    flex-direction: row;
+    gap: 16px;
+
+    :hover {
+      cursor: pointer;
+      opacity: 0.5;
+      transition: 0.5s;
+    }
+  }
+  &__icon {
+    width: 40px;
+    height: 40px;
+  }
+
+  &__yearText {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__link {
+    text-decoration: none;
+
+    :hover {
+      cursor: pointer;
+      opacity: 0.5;
+      transition: 0.5s;
+    }
+
+    p {
+      margin: 0;
+      text-decoration: none;
+      color: white;
+      font-weight: 400;
+      font-size: 16px;
+      line-height: 19.36px;
+
+      :hover {
+        cursor: pointer;
+        opacity: 0.5;
+        transition: 0.5s;
+      }
+    }
+  }
+
+  &__rightColumn {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin: 40px 16px 40px 0px;
+    gap: 150px;
+  }
+  
+  &__textColumn {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    height: 191px;
+    justify-content: space-between;
+  }
+
+  &__linkText {
+    margin: 0;
+    color: white;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 19.36px;
+    text-decoration: underline #ffffff;
+  }
+
+  &__linksColumn {
+    display: flex;
+    flex-direction: column;
+    width: 336px;
+    height: 137px;
+    gap: 40px;
+
+    :hover {
+      cursor: pointer;
+      opacity: 0.5;
+      transition: 0.5s;
+    }
+  }
+}
