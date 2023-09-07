@@ -278,7 +278,7 @@ export interface PatchedUserProfileRequest {
    */
   first_name?: string;
   /** @format binary */
-  avatar?: string | null;
+  avatar?: File | null;
   /**
    * Название
    * Наименование
@@ -302,6 +302,63 @@ export interface PatchedUserProfileRequest {
    * @maxLength 256
    */
   about?: string;
+  /**
+   * Дата рождения
+   * Дата рождения пользователя
+   * @format date
+   */
+  birth_date?: string | null;
+}
+
+/**
+ * * `pornography` - Порнография
+ * * `spam` - Рассылка спама
+ * * `fraud` - Мошенничество
+ * * `offensive_behavior` - Оскорбительное поведение
+ * * `copyright_violation` - Нарушение авторских прав
+ */
+export enum ReasonEnum {
+  Pornography = 'pornography',
+  Spam = 'spam',
+  Fraud = 'fraud',
+  OffensiveBehavior = 'offensive_behavior',
+  CopyrightViolation = 'copyright_violation',
+}
+
+/** Сериализатор жалоб */
+export interface Report {
+  /**
+   * Причина жалобы
+   * Выберите причину данной жалобы.
+   *
+   * * `pornography` - Порнография
+   * * `spam` - Рассылка спама
+   * * `fraud` - Мошенничество
+   * * `offensive_behavior` - Оскорбительное поведение
+   * * `copyright_violation` - Нарушение авторских прав
+   */
+  reason: ReasonEnum;
+  description?: string;
+  /** Закрыть пользователю доступ к моей странице */
+  close_user_access: boolean;
+}
+
+/** Сериализатор жалоб */
+export interface ReportRequest {
+  /**
+   * Причина жалобы
+   * Выберите причину данной жалобы.
+   *
+   * * `pornography` - Порнография
+   * * `spam` - Рассылка спама
+   * * `fraud` - Мошенничество
+   * * `offensive_behavior` - Оскорбительное поведение
+   * * `copyright_violation` - Нарушение авторских прав
+   */
+  reason: ReasonEnum;
+  description?: string;
+  /** Закрыть пользователю доступ к моей странице */
+  close_user_access: boolean;
 }
 
 export interface SetPassword {
@@ -572,12 +629,17 @@ export interface FullRequestParams extends Omit<RequestInit, 'body'> {
   cancelToken?: CancelToken;
 }
 
-export type RequestParams = Omit<FullRequestParams, "body" | "method" | "query" | "path">;
+export type RequestParams = Omit<
+  FullRequestParams,
+  'body' | 'method' | 'query' | 'path'
+>;
 
 export interface ApiConfig<SecurityDataType = unknown> {
   baseUrl?: string;
-  baseApiParams?: Omit<RequestParams, "baseUrl" | "cancelToken" | "signal">;
-  securityWorker?: (securityData: SecurityDataType | null) => Promise<RequestParams | void> | RequestParams | void;
+  baseApiParams?: Omit<RequestParams, 'baseUrl' | 'cancelToken' | 'signal'>;
+  securityWorker?: (
+    securityData: SecurityDataType | null,
+  ) => Promise<RequestParams | void> | RequestParams | void;
   customFetch?: typeof fetch;
 }
 
@@ -621,7 +683,9 @@ export class HttpClient<SecurityDataType = unknown> {
 
   protected encodeQueryParam(key: string, value: any) {
     const encodedKey = encodeURIComponent(key);
-    return `${encodedKey}=${encodeURIComponent(typeof value === "number" ? value : `${value}`)}`;
+    return `${encodedKey}=${encodeURIComponent(
+      typeof value === 'number' ? value : `${value}`,
+    )}`;
   }
 
   protected addQueryParam(query: QueryParamsType, key: string) {
@@ -635,10 +699,16 @@ export class HttpClient<SecurityDataType = unknown> {
 
   protected toQueryString(rawQuery?: QueryParamsType): string {
     const query = rawQuery || {};
-    const keys = Object.keys(query).filter((key) => "undefined" !== typeof query[key]);
+    const keys = Object.keys(query).filter(
+      (key) => 'undefined' !== typeof query[key],
+    );
     return keys
-      .map((key) => (Array.isArray(query[key]) ? this.addArrayQueryParam(query, key) : this.addQueryParam(query, key)))
-      .join("&");
+      .map((key) =>
+        Array.isArray(query[key])
+          ? this.addArrayQueryParam(query, key)
+          : this.addQueryParam(query, key),
+      )
+      .join('&');
   }
 
   protected addQueryParams(rawQuery?: QueryParamsType): string {
@@ -648,8 +718,13 @@ export class HttpClient<SecurityDataType = unknown> {
 
   private contentFormatters: Record<ContentType, (input: any) => any> = {
     [ContentType.Json]: (input: any) =>
-      input !== null && (typeof input === "object" || typeof input === "string") ? JSON.stringify(input) : input,
-    [ContentType.Text]: (input: any) => (input !== null && typeof input !== "string" ? JSON.stringify(input) : input),
+      input !== null && (typeof input === 'object' || typeof input === 'string')
+        ? JSON.stringify(input)
+        : input,
+    [ContentType.Text]: (input: any) =>
+      input !== null && typeof input !== 'string'
+        ? JSON.stringify(input)
+        : input,
     [ContentType.FormData]: (input: any) =>
       Object.keys(input || {}).reduce((formData, key) => {
         const property = input[key];
@@ -659,14 +734,17 @@ export class HttpClient<SecurityDataType = unknown> {
             ? property
             : typeof property === 'object' && property !== null
             ? JSON.stringify(property)
-            : `${property}`
+            : `${property}`,
         );
         return formData;
       }, new FormData()),
     [ContentType.UrlEncoded]: (input: any) => this.toQueryString(input),
   };
 
-  protected mergeRequestParams(params1: RequestParams, params2?: RequestParams): RequestParams {
+  protected mergeRequestParams(
+    params1: RequestParams,
+    params2?: RequestParams,
+  ): RequestParams {
     return {
       ...this.baseApiParams,
       ...params1,
@@ -679,7 +757,9 @@ export class HttpClient<SecurityDataType = unknown> {
     };
   }
 
-  protected createAbortSignal = (cancelToken: CancelToken): AbortSignal | undefined => {
+  protected createAbortSignal = (
+    cancelToken: CancelToken,
+  ): AbortSignal | undefined => {
     if (this.abortControllers.has(cancelToken)) {
       const abortController = this.abortControllers.get(cancelToken);
       if (abortController) {
@@ -723,15 +803,28 @@ export class HttpClient<SecurityDataType = unknown> {
     const payloadFormatter = this.contentFormatters[type || ContentType.Json];
     const responseFormat = format || requestParams.format;
 
-    return this.customFetch(`${baseUrl || this.baseUrl || ""}${path}${queryString ? `?${queryString}` : ""}`, {
-      ...requestParams,
-      headers: {
-        ...(requestParams.headers || {}),
-        ...(type && type !== ContentType.FormData ? { "Content-Type": type } : {}),
+    return this.customFetch(
+      `${baseUrl || this.baseUrl || ''}${path}${
+        queryString ? `?${queryString}` : ''
+      }`,
+      {
+        ...requestParams,
+        headers: {
+          ...(requestParams.headers || {}),
+          ...(type && type !== ContentType.FormData
+            ? { 'Content-Type': type }
+            : {}),
+        },
+        signal:
+          (cancelToken
+            ? this.createAbortSignal(cancelToken)
+            : requestParams.signal) || null,
+        body:
+          typeof body === 'undefined' || body === null
+            ? null
+            : payloadFormatter(body),
       },
-      signal: (cancelToken ? this.createAbortSignal(cancelToken) : requestParams.signal) || null,
-      body: typeof body === "undefined" || body === null ? null : payloadFormatter(body),
-    }).then(async (response) => {
+    ).then(async (response) => {
       const r = response as HttpResponse<T, E>;
       r.data = null as unknown as T;
       r.error = null as unknown as E;
@@ -779,7 +872,10 @@ export class Api<
      * @name AuthJwtCreateCreate
      * @request POST:/api/v1/auth/jwt/create/
      */
-    authJwtCreateCreate: (data: TokenObtainPairRequest, params: RequestParams = {}) =>
+    authJwtCreateCreate: (
+      data: TokenObtainPairRequest,
+      params: RequestParams = {},
+    ) =>
       this.request<TokenObtainPair, any>({
         path: `/api/v1/auth/jwt/create/`,
         method: 'POST',
@@ -796,7 +892,10 @@ export class Api<
      * @name AuthJwtRefreshCreate
      * @request POST:/api/v1/auth/jwt/refresh/
      */
-    authJwtRefreshCreate: (data: TokenRefreshRequest, params: RequestParams = {}) =>
+    authJwtRefreshCreate: (
+      data: TokenRefreshRequest,
+      params: RequestParams = {},
+    ) =>
       this.request<TokenRefresh, any>({
         path: `/api/v1/auth/jwt/refresh/`,
         method: 'POST',
@@ -813,7 +912,10 @@ export class Api<
      * @name AuthJwtVerifyCreate
      * @request POST:/api/v1/auth/jwt/verify/
      */
-    authJwtVerifyCreate: (data: TokenVerifyRequest, params: RequestParams = {}) =>
+    authJwtVerifyCreate: (
+      data: TokenVerifyRequest,
+      params: RequestParams = {},
+    ) =>
       this.request<void, any>({
         path: `/api/v1/auth/jwt/verify/`,
         method: 'POST',
@@ -842,7 +944,7 @@ export class Api<
         /** A search term. */
         search?: string;
       },
-      params: RequestParams = {}
+      params: RequestParams = {},
     ) =>
       this.request<PaginatedChatListList, any>({
         path: `/api/v1/chats/`,
@@ -895,29 +997,6 @@ export class Api<
       }),
 
     /**
-     * @description Блокировка пользователя в чате
-     *
-     * @tags chats
-     * @name ChatsBlockUserCreate
-     * @request POST:/api/v1/chats/{id}/block_user/
-     * @secure
-     */
-    chatsBlockUserCreate: (
-      id: number,
-      data: ChatRequest,
-      params: RequestParams = {}
-    ) =>
-      this.request<Chat, any>({
-        path: `/api/v1/chats/${id}/block_user/`,
-        method: "POST",
-        body: data,
-        secure: true,
-        type: ContentType.Json,
-        format: "json",
-        ...params,
-      }),
-
-    /**
      * @description Отправить сообщение в чат
      *
      * @tags chats
@@ -926,7 +1005,11 @@ export class Api<
      * @request POST:/api/v1/chats/{id}/send-message/
      * @secure
      */
-    chatsSendMessageCreate: (id: number, data: MessageRequest, params: RequestParams = {}) =>
+    chatsSendMessageCreate: (
+      id: number,
+      data: MessageRequest,
+      params: RequestParams = {},
+    ) =>
       this.request<Message, any>({
         path: `/api/v1/chats/${id}/send-message/`,
         method: 'POST',
@@ -983,51 +1066,6 @@ export class Api<
       }),
 
     /**
-     * @description Разблокировка пользователя в чате
-     *
-     * @tags chats
-     * @name ChatsUnblockUserCreate
-     * @request POST:/api/v1/chats/{id}/unblock_user/
-     * @secure
-     */
-    chatsUnblockUserCreate: (
-      id: number,
-      data: ChatRequest,
-      params: RequestParams = {}
-    ) =>
-      this.request<Chat, any>({
-        path: `/api/v1/chats/${id}/unblock_user/`,
-        method: "POST",
-        body: data,
-        secure: true,
-        type: ContentType.Json,
-        format: "json",
-        ...params,
-      }),
-
-    /**
-     * @description Создание группового чата.
-     *
-     * @tags chats
-     * @name ChatsStartGroupChatCreate
-     * @request POST:/api/v1/chats/start-group-chat/
-     * @secure
-     */
-    chatsStartGroupChatCreate: (
-      data: GroupChatCreateRequest,
-      params: RequestParams = {}
-    ) =>
-      this.request<GroupChatCreate, any>({
-        path: `/api/v1/chats/start-group-chat/`,
-        method: "POST",
-        body: data,
-        secure: true,
-        type: ContentType.Json,
-        format: "json",
-        ...params,
-      }),
-
-    /**
      * @description Начать чат с пользователем, отправить первое сообщение
      *
      * @tags chats
@@ -1036,7 +1074,10 @@ export class Api<
      * @request POST:/api/v1/chats/start-personal-chat/
      * @secure
      */
-    chatsStartPersonalChatCreate: (data: ChatStartRequest, params: RequestParams = {}) =>
+    chatsStartPersonalChatCreate: (
+      data: ChatStartRequest,
+      params: RequestParams = {},
+    ) =>
       this.request<ChatStart, any>({
         path: `/api/v1/chats/start-personal-chat/`,
         method: 'POST',
@@ -1061,7 +1102,7 @@ export class Api<
         /** A search term. */
         search?: string;
       },
-      params: RequestParams = {}
+      params: RequestParams = {},
     ) =>
       this.request<Country[], any>({
         path: `/api/v1/countries/`,
@@ -1106,7 +1147,7 @@ export class Api<
         /** A page number within the paginated result set. */
         page?: number;
       },
-      params: RequestParams = {}
+      params: RequestParams = {},
     ) =>
       this.request<PaginatedGoalList, any>({
         path: `/api/v1/goals/`,
@@ -1135,7 +1176,7 @@ export class Api<
         /** A search term. */
         search?: string;
       },
-      params: RequestParams = {}
+      params: RequestParams = {},
     ) =>
       this.request<PaginatedInterestList, any>({
         path: `/api/v1/interests/`,
@@ -1160,7 +1201,7 @@ export class Api<
         /** A search term. */
         search?: string;
       },
-      params: RequestParams = {}
+      params: RequestParams = {},
     ) =>
       this.request<Language[], any>({
         path: `/api/v1/languages/`,
@@ -1237,9 +1278,15 @@ export class Api<
          * * `Guru` - Гуру
          * * `Native` - Носитель
          */
-        skill_level?: "Amateur" | "Expert" | "Guru" | "Native" | "Newbie" | "Profi";
+        skill_level?:
+          | 'Amateur'
+          | 'Expert'
+          | 'Guru'
+          | 'Native'
+          | 'Newbie'
+          | 'Profi';
       },
-      params: RequestParams = {}
+      params: RequestParams = {},
     ) =>
       this.request<PaginatedUserReprList, any>({
         path: `/api/v1/users/`,
@@ -1318,6 +1365,7 @@ export class Api<
         path: `/api/v1/users/${slug}/report_user/`,
         method: 'GET',
         secure: true,
+        format: 'json',
         ...params,
       }),
 
@@ -1330,11 +1378,18 @@ export class Api<
      * @request POST:/api/v1/users/{slug}/report_user/
      * @secure
      */
-    usersReportUserCreate: (slug: string, params: RequestParams = {}) =>
-      this.request<void, any>({
+    usersReportUserCreate: (
+      slug: string,
+      data: ReportRequest,
+      params: RequestParams = {},
+    ) =>
+      this.request<Report, any>({
         path: `/api/v1/users/${slug}/report_user/`,
-        method: "POST",
+        method: 'POST',
+        body: data,
         secure: true,
+        type: ContentType.Json,
+        format: 'json',
         ...params,
       }),
 
@@ -1418,7 +1473,10 @@ export class Api<
      * @request PATCH:/api/v1/users/me/
      * @secure
      */
-    usersMePartialUpdate: (data: PatchedUserProfileRequest, params: RequestParams = {}) =>
+    usersMePartialUpdate: (
+      data: PatchedUserProfileRequest,
+      params: RequestParams = {},
+    ) =>
       this.request<UserProfile, any>({
         path: `/api/v1/users/me/`,
         method: 'PATCH',
@@ -1455,7 +1513,10 @@ export class Api<
      * @request POST:/api/v1/users/set_password/
      * @secure
      */
-    usersSetPasswordCreate: (data: SetPasswordRequest, params: RequestParams = {}) =>
+    usersSetPasswordCreate: (
+      data: SetPasswordRequest,
+      params: RequestParams = {},
+    ) =>
       this.request<SetPassword, any>({
         path: `/api/v1/users/set_password/`,
         method: 'POST',
