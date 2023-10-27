@@ -22,7 +22,7 @@
     "eject": "react-scripts eject",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build",
-    "api": "npx swagger-typescript-api -p https://lingvogo.acceleratorpracticum.ru/api/v1/schema/ -o ./src -n utils/openapi.ts",
+    "api": "npx swagger-typescript-api -p https://linguachat-5tzn.onrender.com/api/v1/schema/ -o ./src -n utils/openapi.ts",
     "lint": "eslint src",
     "lint:fix": "eslint src --fix",
     "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx}\""
